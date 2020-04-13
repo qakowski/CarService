@@ -1,0 +1,19 @@
+﻿@page "/car/{id}"
+@inject GetCar getCarService
+@if (_car != null)
+{
+<h3>@_car.Description</h3>
+}
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+
+    private Data.Car _car;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _car = await getCarService.Handle(new GetCarCommand() { CallId = Id });
+        await base.OnInitializedAsync();
+    }
+}

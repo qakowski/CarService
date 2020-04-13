@@ -1,0 +1,68 @@
+﻿@page "/addCar"
+@inject SerwisSamochodowy.Services.AddCar addCarService
+<h3>AddCar</h3>
+<EditForm EditContext="@_editContext" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary style="@_displaySummary" />
+
+    <label>Producent: </label><InputText id="Producer" @bind-Value="_addCarCommand.Producer" /><br />
+    <label>Model: </label><InputText id="Model" @bind-Value="_addCarCommand.Model" /><br />
+    <label>Imię klienta: </label><InputText id="ClientForeName" @bind-Value="_addCarCommand.Client.ForeName" /><br />
+    <label>Nazwisko klienta: </label><InputText id="ClientSureName" @bind-Value="_addCarCommand.Client.SureName" /><br />
+    <label>Opis: </label><InputTextArea id="Description" @bind-Value="_addCarCommand.Description" /><br />
+
+    <InputFile OnChange="HandleFileSelected" />
+
+    <button type="submit" disabled="@_formInvalid">Dodaj samochód</button>
+</EditForm>
+@if (_createdCar != null)
+{
+    <div class="@_displaySummary">
+        Stworzono samochód<br />
+        ID zgłoszenia: @_createdCar.Id;
+    </div>
+}
+
+@code {
+    private bool _formInvalid = true;
+    private EditContext _editContext;
+    private AddCarCommand _addCarCommand;
+    public Data.Car _createdCar;
+    private string _displaySummary = "display:none";
+
+    protected override Task OnInitializedAsync()
+    {
+        _addCarCommand = new AddCarCommand() { Received = DateTime.Now, State = StateEnum.Przyjety, Client = new Client() };
+        _editContext = new EditContext(_addCarCommand);
+        _editContext.OnFieldChanged += HandleFieldChange;
+        return base.OnInitializedAsync();
+    }
+
+    private async void HandleValidSubmit()
+    {
+        _displaySummary = "display:block";
+        _createdCar = await addCarService.Handle(_addCarCommand);
+    }
+
+    private void HandleFieldChange(object sender, FieldChangedEventArgs e)
+    {
+        _formInvalid = !_editContext.Validate();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        _editContext.OnFieldChanged -= HandleFieldChange;
+    }
+
+    private async Task HandleFileSelected(IFileListEntry[] files)
+    {
+        var file = files.FirstOrDefault();
+        using (var stream = file.Data)
+        {
+            var buffer = new byte[stream.Length];
+            await stream.ReadAsync(buffer);
+            _addCarCommand.Photo = Convert.ToBase64String(buffer);
+        }
+    }
+}
