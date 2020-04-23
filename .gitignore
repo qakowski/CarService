@@ -12,7 +12,7 @@
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
-
+wwwroot/cars/
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
