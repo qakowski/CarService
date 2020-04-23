@@ -20,7 +20,9 @@ namespace SerwisSamochodowy.Services
 
         public async Task<IEnumerable<Car>> Handle(GetCarsCommand command)
         {
-            return await _carsRepository.FindCars(command.ClientName, command.CallId.ToObjectId(), command.Producer, command.Model);
+            var result = await _carsRepository.FindCars(command.ClientName, command.CallId.ToObjectId(), command.Producer, command.Model);
+            result.Select(p => p.Received).Select(p => p.ToLocalTime());
+            return result;
         }
     }
 }

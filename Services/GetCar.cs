@@ -16,7 +16,9 @@ namespace SerwisSamochodowy.Services
 
         public async Task<Car> Handle(GetCarCommand command)
         {
-            return await _repository.GetCar(command.CallId.ToObjectId());
+            var result = await _repository.GetCar(command.CallId.ToObjectId());
+            result.Received.ToLocalTime();
+            return result;
         }
     }
 }

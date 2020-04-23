@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using MongoDB.Bson;
 using SerwisSamochodowy.Data;
 using SerwisSamochodowy.Mongo;
+using SerwisSamochodowy.Commands;
+using MongoDB.Driver;
 
 namespace SerwisSamochodowy.Repositories
 {
@@ -21,7 +23,13 @@ namespace SerwisSamochodowy.Repositories
 
         public async Task<Car> AddCar(Car car) 
             => await _repository.AddAsync(car);
-        
+
+        public async Task<Car> ChangeState(ObjectId id, StateEnum state)
+        {
+            var filterDefinition = Builders<Car>.Filter.Eq(p => p.Id, id);
+            var updateDefinition = Builders<Car>.Update.Set(p => p.State, state);
+            return await _repository.UpdateAsync(filterDefinition, updateDefinition);
+        }
 
         public async Task<IEnumerable<Car>> FindCars(string clientName, ObjectId callId, string producer, string model)
         {
@@ -37,10 +45,10 @@ namespace SerwisSamochodowy.Repositories
                 clientNamePredicate = p => p.Id.Equals(callId);
 
             if (!string.IsNullOrEmpty(producer))
-                clientNamePredicate = p => p.Client.SureName.Contains(producer);
+                clientNamePredicate = p => p.Producer.Contains(producer);
 
             if (!string.IsNullOrEmpty(model))
-                clientNamePredicate = p => p.Client.SureName.Contains(model);
+                clientNamePredicate = p => p.Model.Contains(model);
 
             Expression<Func<Car, bool>> combinedPredicate = p => 
             clientNamePredicate.Invoke(p) && 
@@ -54,6 +62,11 @@ namespace SerwisSamochodowy.Repositories
         public async Task<Car> GetCar(ObjectId id)
         {
             return await _repository.GetAsync(id);
+        }
+
+        public async Task RemoveCar(ObjectId id)
+        {
+            await _repository.DeleteAsync(id); 
         }
     }
 }

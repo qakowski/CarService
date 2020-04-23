@@ -15,7 +15,7 @@ namespace SerwisSamochodowy.Mongo
         Task<IEnumerable<TEntity>> FindAsync();
         Task<IEnumerable<TEntity>> FindAsync(Expression<Func<TEntity, bool>> expression);
         Task<TEntity> AddAsync(TEntity entity);
-        Task UpdateAsync(TEntity entity);
+        Task<TEntity> UpdateAsync(FilterDefinition<TEntity> filter, UpdateDefinition<TEntity> updateDefinition);
         Task<DeleteResult> DeleteAsync(ObjectId id);
         Task UpdateManyAsync(Expression<Func<TEntity, bool>> expression, UpdateDefinition<TEntity> update);
     }

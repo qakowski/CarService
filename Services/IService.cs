@@ -7,4 +7,8 @@ namespace SerwisSamochodowy.Services
     {
         Task<TResult> Handle(TCommand command);
     }
+    public interface IService<in TCommand> where TCommand : ICommand
+    {
+        Task Handle(TCommand command);
+    }
 }

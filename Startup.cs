@@ -43,7 +43,7 @@ namespace SerwisSamochodowy
 
         public void ConfigureContainer(ContainerBuilder builder)
         {
-            BsonSerializer.RegisterSerializer<IBase>(new ImpliedImplementationInterfaceSerializer<IBase, BaseEntity>(BsonSerializer.LookupSerializer<BaseEntity>()));
+            BsonSerializer.RegisterSerializer(new ImpliedImplementationInterfaceSerializer<IBase, BaseEntity>(BsonSerializer.LookupSerializer<BaseEntity>()));
             builder.RegisterAssemblyTypes(Assembly.GetEntryAssembly()).AsImplementedInterfaces();
 
             builder.AddMongo();

@@ -19,11 +19,16 @@ namespace SerwisSamochodowy.Services
         }
         public async Task<Car> Handle(AddCarCommand command)
         {
+            
             var car = new Car()
             {
                 Id = ObjectId.Empty,
                 Model = command.Model,
-                Client = command.Client,
+                Client = new Client()
+                {
+                    ForeName = command.ClientForeName,
+                    SureName = command.ClientSureName
+                },
                 Description = command.Description,
                 Photo = command.Photo,
                 Producer = command.Producer,

@@ -1,19 +1,120 @@
 ﻿@page "/car/{id}"
-@inject GetCar getCarService
+@inject IService<GetCarCommand, Data.Car> getCarService
+@inject IService<ChangeCarStateCommand, Data.Car> updateCarStateService
+@inject IService<RemoveCarCommand> removeCarService
+@inject NavigationManager NavigationManager
+@inject IService<RemoveFileCommand> removeFileService
+
+<a class="btn btn-primary" href="/">Wróć na strone główną</a>
+<style>
+    .table td{
+        border-top:0px;
+        font-size:25px;
+    }
+    .table th {
+        border-top: 0px;
+        font-size: 25px;
+        filter: brightness(50%);
+    }
+</style>
 @if (_car != null)
 {
-<h3>@_car.Description</h3>
+<table class="table" style="border-top:0px;">
+    <tr>
+        <td rowspan="7" style="width:30%;height:50%;"><img style="width:450px;height:450px" src="@_car.Photo" /></td>
+    </tr>
+
+    <tr style="height:2%;">
+        <th scope="col">Producent</th>
+        <th scope="col">Model</th>
+    </tr>
+    <tr style="width:30%; height:15%;">
+        <td>@_car.Producer</td>
+        <td>@_car.Model</td>
+
+    </tr>
+    <tr style="height:2%;">
+        <th scope="col">Numer zgłoszenia</th>
+        <th scope="col">Stan</th>
+    </tr>
+    <tr style="width:30%; height:15%;">
+        <td>@_car.Id.ToString()</td>
+        @switch (_car.State)
+        {
+            case StateEnum.Przyjety:
+                <td style="color:gray">@_car.State.ToString()</td>
+                break;
+            case StateEnum.Naprawa:
+                <td style="color:bisque">@_car.State.ToString()</td>
+                break;
+            case StateEnum.Naprawiony:
+                <td style="color:lawngreen">@_car.State.ToString()</td>
+                break;
+            default:
+                <td>@_car.State.ToString()</td>
+                break;
+        }
+    </tr>
+    <tr style="height:2%;">
+        <th scope="col">Data otrzymania</th>
+    </tr>
+    <tr style="width:30%; height:15%;">
+        <td>@_car.Received</td>
+    </tr>
+</table>
+<div id="buttons" style="width:100%;">
+    <div style="float:right;">
+        @if (_car.State != StateEnum.Naprawiony)
+        {
+            <button class="btn btn-primary" @onclick="(async (e) => await ChangeState(nextState))">
+                Zmień stan na: @nextState.ToString()
+            </button>
+        }
+
+        @if (_car.State > 0)
+        {
+            <button class="btn btn-warning" @onclick="(async (e) => await ChangeState(previouseState))">Zmień stan na: @previouseState.ToString()</button>
+        }
+
+        <button class="btn btn-primary" @onclick="RemoveCar">Usuń samochód</button>
+    </div>
+</div>
+}
+else
+{
+    <h1>Nie znaleziono zgłoszenia o podanym ID: @Id</h1>
 }
 
 @code {
     [Parameter]
     public string Id { get; set; }
 
+    public StateEnum nextState;
+    public StateEnum previouseState;
+
     private Data.Car _car;
 
     protected async override Task OnInitializedAsync()
     {
-        _car = await getCarService.Handle(new GetCarCommand() { CallId = Id });
+        _car = await getCarService.Handle(new GetCarCommand() { CallId = Id});
+        if (_car != null)
+        {
+            nextState = _car.State + 1;
+            previouseState = _car.State - 1;
+        }
         await base.OnInitializedAsync();
+    }
+    private async Task RemoveCar()
+    {
+        await removeCarService.Handle(new RemoveCarCommand() { CallId = Id });
+        await removeFileService.Handle(new RemoveFileCommand { FilePath = _car.Photo });
+        NavigationManager.NavigateTo("/");
+    }
+
+    private async Task ChangeState(StateEnum state)
+    {
+        _car = await updateCarStateService.Handle(new ChangeCarStateCommand() { CallId = Id, State = state });
+        previouseState = _car.State - 1;
+        nextState = _car.State + 1;
     }
 }

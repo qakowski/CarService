@@ -34,8 +34,11 @@ namespace SerwisSamochodowy.Mongo
         public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> expression)
             => await _mongoCollection.Find(expression).SingleOrDefaultAsync();
 
-        public async Task UpdateAsync(TEntity entity)
-            => await _mongoCollection.ReplaceOneAsync<TEntity>(p => p.Id == entity.Id, entity);
+        public async Task<TEntity> UpdateAsync(FilterDefinition<TEntity> filter, UpdateDefinition<TEntity> updateDefinition)
+        {
+            await _mongoCollection.UpdateOneAsync(filter, updateDefinition);
+            return await _mongoCollection.Find(filter).SingleOrDefaultAsync();
+        }
 
         public async Task<DeleteResult> DeleteAsync(ObjectId id)
             => await _mongoCollection.DeleteOneAsync(p => p.Id == id);
