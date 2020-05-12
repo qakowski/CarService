@@ -3,50 +3,54 @@
 @inject IService<UploadFIleCommand, string> uploadFileToServerService
 @inject IService<RemoveFileCommand> removeFileService
 
-<div id="container" style="margin-left:31%;margin-right:31%;width:70%;">
-    <div id="logo" style="width:30%;height:300px;">
-        <img src="logo.png" style="width:100%;height:100%;margin-left:35%;margin-right:35%;" />
-    </div>
-    <div id="form">
-        <EditForm EditContext="@_editContext" OnValidSubmit="(async (e)=>await HandleValidSubmit())">
-            <DataAnnotationsValidator />
-            <ValidationSummary style="@_displaySummary" />
-            <div class="form-group" style="width:50%;">
-
-                <label>Producent: </label><InputText class="form-control" id="Producer" @bind-Value="_addCarCommand.Producer" /><br />
-                <label>Model: </label><InputText class="form-control" id="Model" @bind-Value="_addCarCommand.Model" /><br />
-                <label>Imię klienta: </label><InputText class="form-control" id="ClientForeName" @bind-Value="_addCarCommand.ClientForeName" /><br />
-                <label>Nazwisko klienta: </label><InputText class="form-control" id="ClientSureName" @bind-Value="_addCarCommand.ClientSureName" /><br />
-                <label>Opis: </label><InputTextArea class="form-control" id="Description" @bind-Value="_addCarCommand.Description" style="width:100%;" /><br />
-
-                <div class="custom-file">
-                    <InputFile OnChange="HandleFileSelected" type="file" class="custom-file-input" id="validatedCustomFile" required />
-                    <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
-                    <div class="invalid-feedback">Example invalid custom file feedback</div>
-                </div>
-                <div id="btn-container">
-                    <a href="/" class="btn btn-primary">Wróć na strone główną</a>
-                    <button type="submit" disabled="@_formInvalid" class="btn btn-primary" style="float:right;">Dodaj samochód</button>
-
-                </div>
-            </div>
-        </EditForm>
-        @if (_createdCar != null)
-        {
-            <div class="@_displaySummary">
-                Stworzono samochód<br />
-                ID zgłoszenia: <b>@_createdCar.Id</b>
-            </div>
-        }
-    </div>
-    @if (_addCarCommand.Photo != null)
-    {
-        <p>Wybrane zdjęcie:</p>
-        <div id="filePreview">
-            <img src="@_addCarCommand.Photo" style="max-height:500px; max-width:500px;"/>
+    <div style="width:100%;">
+        <div id="logo" style="width:30%;height:350px;margin-left:35%;margin-right:35%;">
+            <img src="logo.png" style="width:100%;height:100%;" />
         </div>
-    }
-</div>
+    </div>
+    <div style="width:100%;height:60%;">
+        <div id="form" style="width:60%;float:left;">
+            <EditForm EditContext="@_editContext" OnValidSubmit="(async (e)=>await HandleValidSubmit())">
+                <DataAnnotationsValidator />
+                <ValidationSummary style="@_displaySummary" />
+                <div class="form-group" style="width:50%;">
+
+                    <label>Producent: </label><InputText class="form-control" id="Producer" @bind-Value="_addCarCommand.Producer" /><br />
+                    <label>Model: </label><InputText class="form-control" id="Model" @bind-Value="_addCarCommand.Model" /><br />
+                    <label>Imię klienta: </label><InputText class="form-control" id="ClientForeName" @bind-Value="_addCarCommand.ClientForeName" /><br />
+                    <label>Nazwisko klienta: </label><InputText class="form-control" id="ClientSureName" @bind-Value="_addCarCommand.ClientSureName" /><br />
+                    <label>Opis: </label><InputTextArea class="form-control" id="Description" @bind-Value="_addCarCommand.Description" style="width:100%;" /><br />
+
+                    <div class="custom-file">
+                        <InputFile OnChange="HandleFileSelected" type="file" class="custom-file-input" id="validatedCustomFile" required />
+                        <label class="custom-file-label" for="validatedCustomFile">Choose file...</label>
+                        <div class="invalid-feedback">Example invalid custom file feedback</div>
+                    </div>
+                    <div id="btn-container">
+                        <a href="/" class="btn btn-primary">Wróć na strone główną</a>
+                        <button type="submit" disabled="@_formInvalid" class="btn btn-primary" style="float:right;">Dodaj samochód</button>
+
+                    </div>
+                </div>
+            </EditForm>
+        </div>
+        <div style="width:30%;float:left;">
+            @if (_addCarCommand.Photo != null)
+            {
+                <p>Wybrane zdjęcie:</p>
+                <div id="filePreview">
+                    <img src="@_addCarCommand.Photo" style="max-height:500px; max-width:500px;" />
+                </div>
+            }
+            @if (_createdCar != null)
+            {
+                <div class="@_displaySummary">
+                    Stworzono samochód<br />
+                    ID zgłoszenia: <b>@_createdCar.Id</b>
+                </div>
+            }
+        </div>
+    </div>
 
 @code {
     private bool _formInvalid = true;

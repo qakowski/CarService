@@ -9,12 +9,19 @@
     }
 
     .tableRowAsLink:hover {
-            filter: brightness(50%);
+            filter: brightness(75%);
+            color:ivory !important;
             transition: 0.5s;
     }
-
+    .table-light {
+        background-color: #8D99AE;
+        color:#071424;
+    }
+    .table-dark {
+        background-color: #748CAB
+    }
 </style>
-<div style="width:100%;height:50%;">
+<div style="width:100%;height:500px;">
     <div id="logo" style="width:100%; height:350px;"><img src="logo.png" style="width:30%;height:100%;margin-right:35%;margin-left:35%;"/></div>
     <div id="Utilities" style="width:100%;height:15%;">
         <div id="menu" style="width:20%;float:left;height:100%;">
@@ -60,7 +67,8 @@
 
 @if (cars != null && cars.Count() != 0)
 {
-    <table class="table" style="margin-top:2%;">
+<div>
+    <table class="table">
         <thead>
             <tr>
                 <th scope="col">Producent</th>
@@ -78,18 +86,21 @@
             {
 
                 var uri = $"car/{car.Id.ToString()}";
-
+                var description = car.Description.Length > 10 ? car.Description.Substring(0, 10) : car.Description;
+                if (description.Length > 9) description += "...";
                 var className = index % 2 == 0 ? "dark" : "light";
                 <tr class="table-@className tableRowAsLink" @onclick="@(e => MoveToPage(uri))">
                     <td>@car.Producer</td>
                     <td>@car.Model</td>
                     <td>@car.Client.SureName @car.Client.ForeName</td>
                     <td>@car.Id</td>
-                    <td>@car.Description</td>
+                    <td>
+                        @description
+                    </td>
                     @switch (car.State)
                     {
                         case StateEnum.Przyjety:
-                            <td style="color:gray">@car.State</td>
+                            <td style="color:rgb(220, 220, 220)">@car.State</td>
                             break;
                         case StateEnum.Naprawa:
                             <td style="color:bisque">@car.State</td>
@@ -104,13 +115,14 @@
                     <td style="width:30%;height:100%;"><img style="width:50%; height:100px; margin-left:20%;margin-right:20%;" src="@car.Photo" /></td>
                     <td>@car.Received</td>
                 </tr>
-                }
-            </tbody>
+            }
+        </tbody>
     </table>
+</div>
 }
 else
 {
-    <h1 style="margin-top:2%;">Aktualnie nie ma zadnego samochodu na stanie serwisu</h1>
+    <h1 style="margin-top:10%;">Aktualnie nie ma zadnego samochodu na stanie serwisu</h1>
 }
 
 

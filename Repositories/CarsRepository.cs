@@ -42,13 +42,13 @@ namespace SerwisSamochodowy.Repositories
                 clientNamePredicate = p => p.Client.SureName.Contains(clientName);
 
             if (!ObjectId.Empty.Equals(callId))
-                clientNamePredicate = p => p.Id.Equals(callId);
+                callIdPredicate = p => p.Id.Equals(callId);
 
             if (!string.IsNullOrEmpty(producer))
-                clientNamePredicate = p => p.Producer.Contains(producer);
+                producerPredicate = p => p.Producer.Contains(producer);
 
             if (!string.IsNullOrEmpty(model))
-                clientNamePredicate = p => p.Model.Contains(model);
+                modelPredicate = p => p.Model.Contains(model);
 
             Expression<Func<Car, bool>> combinedPredicate = p => 
             clientNamePredicate.Invoke(p) && 
